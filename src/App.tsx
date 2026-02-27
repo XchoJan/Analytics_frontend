@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {getSinglePrediction, getExpressPrediction, getExpress5Prediction, getMatchesWithOdds, Match, analyzeMatch, MatchAnalysis, getStats, Stats, createPayment} from './services/api';
+import {getSinglePrediction, getExpressPrediction, getExpress5Prediction, getMatchesWithOdds, Match, MatchAnalysis, getStats, Stats, createPayment} from './services/api';
 import {Prediction} from './types';
 import {ResultCard} from './components/ResultCard';
 import {LoadingSpinner} from './components/LoadingSpinner';
@@ -125,66 +125,47 @@ const App: React.FC = () => {
   };
 
   const handleSingle = async () => {
-    if (matches.length === 0) {
-      setError('Сначала загрузите список матчей');
-      return;
-    }
-
     setLoading(true);
     setError(null);
     setMatchAnalysis(null);
     setPrediction(null);
 
     try {
-      // Передаем все матчи в OpenAI для анализа и выбора игры с минимальным риском
-      const prediction = await getSinglePrediction(matches);
+      const { prediction, matchAnalysis: analysis } = await getSinglePrediction();
       setPrediction(prediction);
-      
-      // Также получаем детальный анализ выбранного матча
-      // Проверяем тип prediction - для single есть поле match
-      if (prediction.type === 'single') {
+
+      if (prediction.type === 'single' && analysis) {
         const matchName = prediction.match;
-        const selectedMatch = matches.find(m => 
+        const selectedMatch = matches.find(m =>
           matchName.includes(m.homeTeam) || matchName.includes(m.awayTeam)
         );
-        
-        if (selectedMatch && selectedMatch.odds) {
-          const analysis = await analyzeMatch(matchName, selectedMatch.league, selectedMatch.date);
-          
-          // Определяем реальный коэффициент из карточки на основе прогноза
-          let realOdds = analysis.odds; // По умолчанию используем то, что вернул анализ
-          const predictionText = analysis.prediction.toLowerCase();
-          
-          if (predictionText.includes('победа хозяев') || predictionText.includes('хозяева') || predictionText.includes('п1')) {
+
+        let realOdds = analysis.odds;
+        if (selectedMatch?.odds) {
+          const txt = analysis.prediction.toLowerCase();
+          if (txt.includes('победа хозяев') || txt.includes('хозяева') || txt.includes('п1')) {
             realOdds = selectedMatch.odds.home;
-          } else if (predictionText.includes('победа гостей') || predictionText.includes('гости') || predictionText.includes('п2')) {
+          } else if (txt.includes('победа гостей') || txt.includes('гости') || txt.includes('п2')) {
             realOdds = selectedMatch.odds.away;
-          } else if (predictionText.includes('ничья') || predictionText.includes('x')) {
+          } else if (txt.includes('ничья') || txt.includes('x')) {
             realOdds = selectedMatch.odds.draw;
-          } else {
-            // Для тоталов и других прогнозов используем коэффициент из prediction (если он есть)
-            if (prediction.odds && Math.abs(prediction.odds - analysis.odds) > 0.1) {
-              // Если коэффициент из prediction ближе к реальным коэффициентам, используем его
-              const realOddsList = [selectedMatch.odds.home, selectedMatch.odds.draw, selectedMatch.odds.away];
-              const predictionOddsMatch = realOddsList.some(odd => Math.abs(odd - prediction.odds) < 0.1);
-              if (predictionOddsMatch) {
-                realOdds = prediction.odds;
-              }
+          } else if (prediction.odds) {
+            const list = [selectedMatch.odds.home, selectedMatch.odds.draw, selectedMatch.odds.away];
+            if (list.some(odd => Math.abs(odd - prediction.odds!) < 0.1)) {
+              realOdds = prediction.odds;
             }
           }
-          
-          // Обновляем анализ с реальным коэффициентом из карточки
-          setMatchAnalysis({
-            ...analysis,
-            odds: realOdds
-          });
         }
+
+        setMatchAnalysis({ ...analysis, odds: realOdds });
       }
     } catch (err: any) {
       // Если ошибка связана с лимитом прогнозов, показываем модальное окно
-      if (err.response?.data?.error === 'PREDICTION_LIMIT_REACHED' || 
+      if (err.response?.data?.error === 'PREDICTION_LIMIT_REACHED' ||
           err.response?.data?.error === 'PREMIUM_REQUIRED') {
         setShowSubscriptionModal(true);
+      } else if (err.response?.data?.error === 'NO_PREDICTIONS') {
+        setError(err.response?.data?.message || 'Прогнозы обновляются. Попробуйте через несколько минут.');
       } else {
         setError(
           err.response?.data?.message ||
@@ -199,12 +180,6 @@ const App: React.FC = () => {
   };
 
   const handleExpress = async () => {
-    if (matches.length < 3) {
-      setError('Нужно минимум 3 игры для экспресс-прогноза');
-      return;
-    }
-
-    // Экспресс доступен только для premium пользователей
     if (!user?.premium) {
       setShowSubscriptionModal(true);
       return;
@@ -218,7 +193,7 @@ const App: React.FC = () => {
 
     try {
       // Передаем все матчи в OpenAI для анализа и выбора 3 игр с минимальным риском
-      const prediction = await getExpressPrediction(matches);
+      const prediction = await getExpressPrediction();
       setPrediction(prediction);
       
       if (prediction.type === 'express') {
@@ -235,9 +210,10 @@ const App: React.FC = () => {
         setExpressAnalysis({ bets, totalRisk });
       }
     } catch (err: any) {
-      // Если ошибка связана с premium, показываем модальное окно
       if (err.response?.data?.error === 'PREMIUM_REQUIRED') {
         setShowSubscriptionModal(true);
+      } else if (err.response?.data?.error === 'NO_PREDICTIONS') {
+        setError(err.response?.data?.message || 'Прогнозы обновляются. Попробуйте через несколько минут.');
       } else {
         setError(
           err.response?.data?.message ||
@@ -252,12 +228,6 @@ const App: React.FC = () => {
   };
 
   const handleExpress5 = async () => {
-    if (matches.length < 5) {
-      setError('Нужно минимум 5 игр для экспресс-прогноза x5');
-      return;
-    }
-
-    // Экспресс x5 доступен только для premium пользователей
     if (!user?.premium) {
       setShowSubscriptionModal(true);
       return;
@@ -271,7 +241,7 @@ const App: React.FC = () => {
 
     try {
       // Передаем все матчи в OpenAI для анализа и выбора 5 игр с минимальным риском
-      const prediction = await getExpress5Prediction(matches);
+      const prediction = await getExpress5Prediction();
       setPrediction(prediction);
       
       if (prediction.type === 'express5') {
@@ -287,9 +257,10 @@ const App: React.FC = () => {
         setExpressAnalysis({ bets, totalRisk });
       }
     } catch (err: any) {
-      // Если ошибка связана с premium, показываем модальное окно
       if (err.response?.data?.error === 'PREMIUM_REQUIRED') {
         setShowSubscriptionModal(true);
+      } else if (err.response?.data?.error === 'NO_PREDICTIONS') {
+        setError(err.response?.data?.message || 'Прогнозы обновляются. Попробуйте через несколько минут.');
       } else {
         setError(
           err.response?.data?.message ||

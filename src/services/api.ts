@@ -3,7 +3,7 @@ import {Prediction} from '../types';
 import { getToken } from './auth';
 
 const API_BASE_URL =
-  process.env.REACT_APP_API_URL || 'http://localhost:4000/api';
+  process.env.REACT_APP_API_URL || '/api';
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -22,18 +22,23 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
-export async function getSinglePrediction(matches?: Match[]): Promise<Prediction> {
-  const response = await apiClient.post<Prediction>('/single', { matches });
+export interface SinglePredictionResponse {
+  prediction: Prediction;
+  matchAnalysis: MatchAnalysis;
+}
+
+export async function getSinglePrediction(): Promise<SinglePredictionResponse> {
+  const response = await apiClient.post<SinglePredictionResponse>('/single', {});
   return response.data;
 }
 
-export async function getExpressPrediction(matches?: Match[]): Promise<Prediction> {
-  const response = await apiClient.post<Prediction>('/express', { matches });
+export async function getExpressPrediction(): Promise<Prediction> {
+  const response = await apiClient.post<Prediction>('/express', {});
   return response.data;
 }
 
-export async function getExpress5Prediction(matches?: Match[]): Promise<Prediction> {
-  const response = await apiClient.post<Prediction>('/express5', { matches });
+export async function getExpress5Prediction(): Promise<Prediction> {
+  const response = await apiClient.post<Prediction>('/express5', {});
   return response.data;
 }
 
