@@ -1,0 +1,141 @@
+.url-management {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.url-management-title {
+  color: #fff;
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.url-management-loading {
+  color: #ccc;
+  text-align: center;
+  padding: 40px;
+  font-size: 16px;
+}
+
+.url-management-error {
+  background: #ff4444;
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.url-management-success {
+  background: #44ff44;
+  color: #000;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.url-management-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.url-management-item {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.url-management-input {
+  flex: 1;
+  background: #0a0a0a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: #fff;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.url-management-input:focus {
+  outline: none;
+  border-color: #4a9eff;
+}
+
+.url-management-remove {
+  background: #ff4444;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  width: 40px;
+  height: 40px;
+  font-size: 24px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.url-management-remove:hover:not(:disabled) {
+  background: #cc3333;
+}
+
+.url-management-remove:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.url-management-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.url-management-add {
+  background: #4a9eff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  width: 50px;
+  height: 50px;
+  font-size: 28px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.url-management-add:hover {
+  background: #3a8eef;
+}
+
+.url-management-save {
+  background: #44ff44;
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  padding: 14px 32px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.url-management-save:hover:not(:disabled) {
+  background: #33ee33;
+}
+
+.url-management-save:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
