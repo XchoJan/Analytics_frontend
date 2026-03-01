@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {getSinglePrediction, getExpressPrediction, getExpress5Prediction, getMatchesWithOdds, Match, MatchAnalysis, getStats, Stats, createPayment} from './services/api';
+import {getSinglePrediction, getExpressPrediction, getExpress5Prediction, getMatchesWithOdds, Match, MatchAnalysis, getStats, Stats, createPayment, getPaymentStatus} from './services/api';
 import {Prediction} from './types';
 import {ResultCard} from './components/ResultCard';
 import {LoadingSpinner} from './components/LoadingSpinner';
@@ -15,6 +15,17 @@ import {AdminMenu} from './components/AdminMenu';
 import {UrlManagement} from './components/UrlManagement';
 import {getCurrentUser, getToken, logout, User} from './services/auth';
 import './App.css';
+
+declare global {
+  interface Window {
+    Telegram?: {
+      WebApp?: {
+        openInvoice: (url: string, callback?: (status: string) => void) => void;
+        initData?: string;
+      };
+    };
+  }
+}
 
 interface ExpressBet {
   match: string;
@@ -278,12 +289,38 @@ const App: React.FC = () => {
     try {
       setLoading(true);
       const payment = await createPayment(plan);
-      
-      // Перенаправляем на страницу оплаты Cryptomus
-      window.location.href = payment.paymentUrl;
+
+      // Mini App в Telegram: открываем инвойс через нативный интерфейс
+      if (window.Telegram?.WebApp?.openInvoice) {
+        window.Telegram.WebApp.openInvoice(payment.paymentUrl, async (status) => {
+          setLoading(false);
+          if (status === 'paid') {
+            setShowSubscriptionModal(false);
+            // Ждём обработку webhook и обновляем пользователя
+            for (let i = 0; i < 10; i++) {
+              await new Promise(r => setTimeout(r, 1000));
+              try {
+                const p = await getPaymentStatus(payment.orderId);
+                if (p.status === 'paid' || p.status === 'paid_over') {
+                  const u = await getCurrentUser();
+                  setUser(u);
+                  loadStats();
+                  return;
+                }
+              } catch {}
+            }
+            handleAuthSuccess();
+          }
+        });
+        return;
+      }
+
+      // Вне Telegram: открываем ссылку (t.me/... с инвойсом)
+      window.open(payment.paymentUrl, '_blank');
     } catch (error: any) {
       console.error('Ошибка при создании платежа:', error);
       alert(error.response?.data?.message || 'Ошибка при создании платежа. Попробуйте позже.');
+    } finally {
       setLoading(false);
       setShowSubscriptionModal(false);
     }

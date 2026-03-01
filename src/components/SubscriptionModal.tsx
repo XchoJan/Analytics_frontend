@@ -8,9 +8,9 @@ interface Props {
 
 export const SubscriptionModal: React.FC<Props> = ({ onClose, onSelectPlan }) => {
   const plans = [
-    { id: 'week' as const, name: 'Неделя', price: 15, duration: '7 дней' },
-    { id: 'month' as const, name: 'Месяц', price: 50, duration: '30 дней' },
-    { id: 'threeMonths' as const, name: '3 месяца', price: 120, duration: '90 дней' },
+    { id: 'week' as const, name: 'Неделя', stars: 1200, duration: '7 дней' },
+    { id: 'month' as const, name: 'Месяц', stars: 4000, duration: '30 дней' },
+    { id: 'threeMonths' as const, name: '3 месяца', stars: 9500, duration: '90 дней' },
   ];
 
   return (
@@ -27,7 +27,7 @@ export const SubscriptionModal: React.FC<Props> = ({ onClose, onSelectPlan }) =>
               <div className="subscription-plan-header">
                 <h3 className="subscription-plan-name">{plan.name}</h3>
                 <div className="subscription-plan-price">
-                  <span className="subscription-plan-amount">${plan.price}</span>
+                  <span className="subscription-plan-amount">{plan.stars} ⭐</span>
                 </div>
               </div>
               <p className="subscription-plan-duration">{plan.duration}</p>
@@ -46,7 +46,7 @@ export const SubscriptionModal: React.FC<Props> = ({ onClose, onSelectPlan }) =>
           ))}
         </div>
         <p className="subscription-modal-note">
-          * Оплата производится безопасным способом
+          * Оплата через Telegram Stars (встроенный кошелёк)
         </p>
       </div>
     </div>
