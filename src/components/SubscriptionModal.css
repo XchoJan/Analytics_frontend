@@ -23,14 +23,72 @@
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
 }
 
+@media (max-width: 768px) {
+  .subscription-modal-overlay {
+    padding: 14px;
+    align-items: flex-start;
+    padding-top: 40px;
+  }
+
+  .subscription-modal {
+    padding: 20px 14px 24px;
+    max-height: calc(100vh - 54px);
+    overflow-y: auto;
+    border-radius: 12px;
+  }
+
+  .subscription-modal-title {
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+
+  .subscription-modal-description {
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+
+  .subscription-plans {
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .subscription-plan {
+    padding: 16px 14px;
+  }
+
+  .subscription-plan-name {
+    font-size: 16px;
+  }
+
+  .subscription-plan-amount {
+    font-size: 24px;
+  }
+
+  .subscription-plan-duration {
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+
+  .subscription-plan-button {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+
+  .subscription-modal-note {
+    font-size: 11px;
+    margin-top: 16px;
+  }
+}
+
 .subscription-modal-close {
   position: absolute;
-  top: 16px;
-  right: 16px;
-  background: none;
-  border: none;
-  color: #ccc;
-  font-size: 32px;
+  top: 12px;
+  right: 12px;
+  background: #333;
+  border: 1px solid #555;
+  color: #fff;
+  font-size: 24px;
+  line-height: 1;
   cursor: pointer;
   width: 40px;
   height: 40px;
@@ -39,10 +97,11 @@
   justify-content: center;
   border-radius: 50%;
   transition: background 0.2s;
+  z-index: 1;
 }
 
 .subscription-modal-close:hover {
-  background: #333;
+  background: #444;
 }
 
 .subscription-modal-title {
@@ -51,6 +110,8 @@
   font-weight: 600;
   margin-bottom: 12px;
   text-align: center;
+  padding-right: 48px;
+  padding-left: 48px;
 }
 
 .subscription-modal-description {
@@ -126,11 +187,8 @@
   max-width: 150px;
   transition: background 0.2s;
   margin: 0 auto;
+  display: block;
   text-align: center;
-}
-
-.subscription-plan-button span {
-  margin-right: 8px;
 }
 
 .subscription-plan-button:hover {

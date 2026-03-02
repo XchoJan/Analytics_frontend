@@ -33,14 +33,9 @@ export const SubscriptionModal: React.FC<Props> = ({ onClose, onSelectPlan }) =>
               <p className="subscription-plan-duration">{plan.duration}</p>
               <button
                 className="subscription-plan-button"
-                style={{position: 'relative'}}
                 onClick={() => onSelectPlan(plan.id)}
               >
-                <span style={{ marginRight: 8, position: 'absolute', 
-                  right: 10, bottom: 4 }}>
-                  Выбрать
-
-                </span>
+                Выбрать
               </button>
             </div>
           ))}
