@@ -8,9 +8,9 @@ interface Props {
 
 export const SubscriptionModal: React.FC<Props> = ({ onClose, onSelectPlan }) => {
   const plans = [
-    { id: 'week' as const, name: 'Неделя', stars: 1200, duration: '7 дней' },
-    { id: 'month' as const, name: 'Месяц', stars: 4000, duration: '30 дней' },
-    { id: 'threeMonths' as const, name: '3 месяца', stars: 9500, duration: '90 дней' },
+    { id: 'week' as const, name: 'Неделя', stars: 1, duration: '7 дней' },
+    { id: 'month' as const, name: 'Месяц', stars: 1, duration: '30 дней' },
+    { id: 'threeMonths' as const, name: '3 месяца', stars: 1, duration: '90 дней' },
   ];
 
   return (
