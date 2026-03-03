@@ -7,10 +7,23 @@ interface Props {
 }
 
 export const SubscriptionModal: React.FC<Props> = ({ onClose, onSelectPlan }) => {
+  // Выгода в % относительно тарифа «Неделя» (700 ⭐ / 7 дней)
   const plans = [
-    { id: 'week' as const, name: 'Неделя', stars: 1, duration: '7 дней' },
-    { id: 'month' as const, name: 'Месяц', stars: 1, duration: '30 дней' },
-    { id: 'threeMonths' as const, name: '3 месяца', stars: 1, duration: '90 дней' },
+    { id: 'week' as const, name: 'Неделя', stars: 700, duration: '7 дней' },
+    {
+      id: 'month' as const,
+      name: 'Месяц',
+      stars: 2200,
+      duration: '30 дней',
+      savingsPercent: Math.round((1 - 2200 / ((30 / 7) * 700)) * 100),
+    },
+    {
+      id: 'threeMonths' as const,
+      name: '3 месяца',
+      stars: 5000,
+      duration: '90 дней',
+      savingsPercent: Math.round((1 - 5000 / ((90 / 7) * 700)) * 100),
+    },
   ];
 
   return (
@@ -30,7 +43,12 @@ export const SubscriptionModal: React.FC<Props> = ({ onClose, onSelectPlan }) =>
                   <span className="subscription-plan-amount">{plan.stars} ⭐</span>
                 </div>
               </div>
-              <p className="subscription-plan-duration">{plan.duration}</p>
+              <p className="subscription-plan-duration">
+                {plan.duration}
+                {plan.savingsPercent != null && (
+                  <span className="subscription-plan-badge"> • Выгодно (−{plan.savingsPercent}%)</span>
+                )}
+              </p>
               <button
                 className="subscription-plan-button"
                 onClick={() => onSelectPlan(plan.id)}

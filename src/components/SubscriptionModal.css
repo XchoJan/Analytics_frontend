@@ -174,6 +174,11 @@
   margin-bottom: 16px;
 }
 
+.subscription-plan-badge {
+  color: #4a9eff;
+  font-weight: 600;
+}
+
 .subscription-plan-button {
   background: #4a9eff;
   color: #fff;
@@ -187,6 +192,7 @@
   max-width: 150px;
   transition: background 0.2s;
   margin: 0 auto;
+  margin-top: auto;
   display: block;
   text-align: center;
 }
