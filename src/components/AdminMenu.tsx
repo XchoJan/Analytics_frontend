@@ -3,8 +3,8 @@ import { generatePredictions, getPredictionCounts } from '../services/admin';
 import './AdminMenu.css';
 
 interface Props {
-  currentView: 'main' | 'urls' | 'users';
-  onViewChange: (view: 'main' | 'urls' | 'users') => void;
+  currentView: 'main' | 'urls' | 'users' | 'stats';
+  onViewChange: (view: 'main' | 'urls' | 'users' | 'stats') => void;
 }
 
 export const AdminMenu: React.FC<Props> = ({ currentView, onViewChange }) => {
@@ -47,6 +47,15 @@ export const AdminMenu: React.FC<Props> = ({ currentView, onViewChange }) => {
               Прогнозы: single {counts.single} · express {counts.express} · express5 {counts.express5}
             </div>
           )}
+          <button
+            className={`admin-menu-item ${currentView === 'stats' ? 'active' : ''}`}
+            onClick={() => {
+              onViewChange('stats');
+              setIsOpen(false);
+            }}
+          >
+            Статистика
+          </button>
           <button
             className={`admin-menu-item ${currentView === 'urls' ? 'active' : ''}`}
             onClick={() => {

@@ -1,0 +1,48 @@
+.admin-stats {
+  padding: 24px 20px;
+}
+
+.admin-stats-title {
+  color: #fff;
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.admin-stats-loading,
+.admin-stats-error {
+  color: #888;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.admin-stats-error {
+  color: #e55;
+}
+
+.admin-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.admin-stats-card {
+  background: #0a0a0a;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+}
+
+.admin-stats-value {
+  color: #4a9eff;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.admin-stats-label {
+  color: #888;
+  font-size: 13px;
+  line-height: 1.3;
+}

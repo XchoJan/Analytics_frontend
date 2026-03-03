@@ -44,3 +44,17 @@ export async function getPredictionCounts(): Promise<PredictionCounts> {
   return response.data;
 }
 
+export interface AdminStatsData {
+  totalUsers: number;
+  premiumCount: number;
+  totalLaunches: number;
+  successfulPayments: number;
+  newUsersLast7Days: number;
+  newPaymentsLast7Days: number;
+}
+
+export async function getAdminStats(): Promise<AdminStatsData> {
+  const response = await apiClient.get<AdminStatsData>('/admin/stats');
+  return response.data;
+}
+

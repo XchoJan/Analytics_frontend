@@ -13,6 +13,8 @@ import {Register} from './components/Register';
 import {SubscriptionModal} from './components/SubscriptionModal';
 import {AdminMenu} from './components/AdminMenu';
 import {UrlManagement} from './components/UrlManagement';
+import {AdminStats} from './components/AdminStats';
+import {recordLaunch} from './services/api';
 import {getCurrentUser, getToken, logout, User} from './services/auth';
 import './App.css';
 
@@ -46,10 +48,16 @@ const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [stats, setStats] = useState<Stats | null>(null);
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
-  const [adminView, setAdminView] = useState<'main' | 'urls' | 'users'>('main');
+  const [adminView, setAdminView] = useState<'main' | 'urls' | 'users' | 'stats'>('main');
 
   useEffect(() => {
     checkAuth();
+  }, []);
+
+  // Учёт запуска приложения — раз за сессию
+  useEffect(() => {
+    if (sessionStorage.getItem('launch_recorded')) return;
+    recordLaunch().then(() => sessionStorage.setItem('launch_recorded', '1')).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -361,6 +369,7 @@ const App: React.FC = () => {
               </div>
             </div>
           </header>
+          {adminView === 'stats' && <AdminStats />}
           {adminView === 'urls' && <UrlManagement />}
           {adminView === 'users' && (
             <div style={{ padding: '40px 20px', textAlign: 'center', color: '#ccc' }}>

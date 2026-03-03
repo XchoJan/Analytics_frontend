@@ -117,3 +117,8 @@ export async function getPaymentStatus(orderId: string): Promise<PaymentStatus> 
   const response = await apiClient.get<PaymentStatus>(`/payments/status/${orderId}`);
   return response.data;
 }
+
+/** Учёт запуска приложения (вызывается раз за сессию) */
+export async function recordLaunch(): Promise<void> {
+  await apiClient.post('/stats/launch');
+}
